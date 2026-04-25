@@ -255,7 +255,7 @@
   // ---------- Parallax floating tiles ----------
   function initParallax() {
     if (prefersReducedMotion) return;
-    var els = document.querySelectorAll('.mini-tile, .hero-badge');
+    var els = document.querySelectorAll('.mini-card, .hero-badge, .stage__leaf, .stage__flower');
     if (!els.length) return;
     var ticking = false;
     function onScroll() {
