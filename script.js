@@ -527,6 +527,326 @@
     });
   }
 
+  /* ============================================================
+     Phase C — Gallery / Read-more / Activity rendering
+     ============================================================ */
+
+  function placeholderFor(item, label) {
+    if (window.SheilaData && window.SheilaData.svgPlaceholder) {
+      return window.SheilaData.svgPlaceholder(label || item.title || item.role || '', item.themeA, item.themeB, item.icon);
+    }
+    return '';
+  }
+
+  // Gallery modal
+  window.openGallery = function (key) {
+    var data = window.SheilaData;
+    if (!data) return;
+    var item = (data.activities || []).find(function (a) { return a.id === key; })
+            || (data.experiences || []).find(function (a) { return a.id === key; });
+    if (!item) return;
+    var images = (item.images && item.images.length) ? item.images
+              : (item.gallery && item.gallery.length) ? item.gallery
+              : [];
+    var videos = item.videos || [];
+    var slides = [];
+    images.forEach(function (img) {
+      slides.push({ kind: 'image', src: typeof img === 'string' ? img : img.src, caption: typeof img === 'string' ? '' : (img.caption || '') });
+    });
+    videos.forEach(function (vid) {
+      slides.push({ kind: 'video', src: typeof vid === 'string' ? vid : vid.src, caption: typeof vid === 'string' ? '' : (vid.caption || '') });
+    });
+    if (!slides.length) {
+      // Single placeholder
+      slides.push({ kind: 'image', src: placeholderFor(item, item.title || item.role || 'Documentation'), caption: 'Foto/video akan ditambahkan' });
+    }
+
+    var current = 0;
+    var thumbsHtml = slides.map(function (s, i) {
+      var isVideo = s.kind === 'video';
+      var thumb = isVideo
+        ? '<div class="gallery__thumb-vid"><i data-lucide="play"></i></div>'
+        : '<img src="' + s.src + '" alt="thumb"/>';
+      return '<button type="button" class="gallery__thumb' + (i === 0 ? ' is-active' : '') + '" data-idx="' + i + '">' + thumb + '</button>';
+    }).join('');
+
+    var html =
+      '<div class="gallery">' +
+        '<div class="gallery__stage">' +
+          '<button type="button" class="gallery__nav gallery__nav--prev" aria-label="Previous"><i data-lucide="chevron-left"></i></button>' +
+          '<div class="gallery__media" data-media></div>' +
+          '<button type="button" class="gallery__nav gallery__nav--next" aria-label="Next"><i data-lucide="chevron-right"></i></button>' +
+        '</div>' +
+        '<div class="gallery__caption" data-caption></div>' +
+        '<div class="gallery__meta">' +
+          (item.date ? '<span class="gallery__chip"><i data-lucide="calendar"></i> ' + item.date + '</span>' : '') +
+          (item.role ? '<span class="gallery__chip"><i data-lucide="user"></i> ' + item.role + '</span>' : '') +
+          (item.category ? '<span class="gallery__chip"><i data-lucide="tag"></i> ' + item.category + '</span>' : '') +
+          (item.skills && item.skills.length ? '<span class="gallery__chip"><i data-lucide="sparkles"></i> ' + item.skills.join(', ') + '</span>' : '') +
+        '</div>' +
+        (item.description ? '<p class="gallery__desc">' + item.description + '</p>' : '') +
+        '<div class="gallery__thumbs">' + thumbsHtml + '</div>' +
+      '</div>';
+
+    var modal = openModal({
+      title: item.title || item.role,
+      subtitle: item.category ? item.category : '',
+      html: html,
+      size: 'gallery'
+    });
+
+    function render() {
+      var slide = slides[current];
+      var media = modal.querySelector('[data-media]');
+      var caption = modal.querySelector('[data-caption]');
+      if (slide.kind === 'video') {
+        var src = slide.src || '';
+        var isYouTube = /youtube\.com|youtu\.be/.test(src);
+        if (isYouTube) {
+          var ytId = (src.match(/(?:v=|be\/)([\w-]{6,})/) || [])[1];
+          media.innerHTML = '<iframe src="https://www.youtube.com/embed/' + ytId + '" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+        } else {
+          media.innerHTML = '<video controls src="' + src + '"></video>';
+        }
+      } else {
+        media.innerHTML = '<img src="' + slide.src + '" alt="' + (slide.caption || '') + '"/>';
+      }
+      caption.textContent = slide.caption || '';
+      var thumbs = modal.querySelectorAll('.gallery__thumb');
+      thumbs.forEach(function (t, i) { t.classList.toggle('is-active', i === current); });
+    }
+    function go(delta) {
+      current = (current + delta + slides.length) % slides.length;
+      render();
+    }
+    modal.querySelector('.gallery__nav--prev').addEventListener('click', function () { go(-1); });
+    modal.querySelector('.gallery__nav--next').addEventListener('click', function () { go(1); });
+    modal.querySelectorAll('.gallery__thumb').forEach(function (t) {
+      t.addEventListener('click', function () {
+        current = parseInt(t.getAttribute('data-idx'), 10) || 0;
+        render();
+      });
+    });
+    modal.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') go(-1);
+      if (e.key === 'ArrowRight') go(1);
+    });
+    render();
+  };
+
+  // Read-more modal for experience cards
+  window.openDetail = function (key) {
+    var data = window.SheilaData;
+    if (!data) return;
+    var item = (data.experiences || []).find(function (a) { return a.id === key; })
+            || (data.activities || []).find(function (a) { return a.id === key; })
+            || (data.knowledge || []).find(function (a) { return a.id === key; });
+    if (!item) return;
+
+    var bullets = item.details || (item.body ? [item.body] : []);
+    var html =
+      '<div class="detail">' +
+        '<div class="detail__hero" style="background: linear-gradient(135deg, ' + (item.themeA || '#14B8A6') + ', ' + (item.themeB || '#0284C7') + ')">' +
+          '<div class="detail__hero-icon"></div>' +
+          '<div class="detail__hero-meta">' +
+            (item.role || item.title) + (item.company ? ' · ' + item.company : '') +
+            (item.period ? '<span>' + item.period + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        (item.summary ? '<p class="detail__summary">' + item.summary + '</p>' : '') +
+        (bullets.length ? '<ul class="detail__list">' + bullets.map(function (b) { return '<li>' + b + '</li>'; }).join('') + '</ul>' : '') +
+        (item.skills && item.skills.length ? '<div class="detail__skills">' + item.skills.map(function (s) { return '<span class="chip">' + s + '</span>'; }).join('') + '</div>' : '') +
+        '<div class="modal-actions">' +
+          '<button type="button" class="btn btn--gradient" data-action="view-gallery" data-gallery="' + item.id + '"><i data-lucide="image"></i> View Gallery</button>' +
+          '<button type="button" class="btn btn--outline" data-action="contact-me"><i data-lucide="send"></i> Contact Me</button>' +
+        '</div>' +
+      '</div>';
+
+    openModal({
+      title: item.title || item.role,
+      subtitle: item.company || item.category || '',
+      html: html,
+    });
+  };
+
+  // ---------- Render dynamic activity grid (for activities.html / sections) ----------
+  function renderActivityGrid(host, options) {
+    var data = window.SheilaData; if (!data) return;
+    options = options || {};
+    var category = options.category || 'All';
+    var items = data.activities.filter(function (a) {
+      return category === 'All' || a.category === category;
+    });
+    host.innerHTML = items.map(function (a) {
+      var thumb = (a.images && a.images.length) ? a.images[0] : placeholderFor(a, a.title);
+      var src = typeof thumb === 'string' ? thumb : thumb.src;
+      return '' +
+        '<article class="activity-card" data-id="' + a.id + '">' +
+          '<div class="activity-card__thumb"><img src="' + src + '" alt="' + a.title + '" loading="lazy"/></div>' +
+          '<div class="activity-card__body">' +
+            '<span class="activity-card__cat">' + a.category + '</span>' +
+            '<h3 class="activity-card__title">' + a.title + '</h3>' +
+            '<p class="activity-card__desc">' + a.description + '</p>' +
+            '<div class="activity-card__tags">' + (a.tags || []).map(function (t) { return '<span class="chip">' + t + '</span>'; }).join('') + '</div>' +
+            '<div class="activity-card__cta">' +
+              '<button type="button" class="btn btn--gradient btn--sm" data-action="view-gallery" data-gallery="' + a.id + '"><i data-lucide="image"></i> View Gallery</button>' +
+              '<button type="button" class="btn btn--outline btn--sm" data-action="read-more" data-detail="' + a.id + '"><i data-lucide="book-open"></i> Read More</button>' +
+            '</div>' +
+          '</div>' +
+        '</article>';
+    }).join('');
+    if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+  }
+
+  function initActivityHosts() {
+    document.querySelectorAll('[data-activity-grid]').forEach(function (host) {
+      renderActivityGrid(host, { category: 'All' });
+    });
+    document.querySelectorAll('[data-activity-filter]').forEach(function (filter) {
+      var targetSel = filter.getAttribute('data-activity-filter');
+      var target = document.querySelector(targetSel);
+      filter.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          filter.querySelectorAll('button').forEach(function (x) { x.classList.remove('is-active'); });
+          b.classList.add('is-active');
+          renderActivityGrid(target, { category: b.getAttribute('data-cat') });
+        });
+      });
+    });
+  }
+
+  // ---------- Daily Activity rendering ----------
+  function renderDailyPosts(host, opts) {
+    var data = window.SheilaData; if (!data) return;
+    opts = opts || {};
+    var keyword = (opts.keyword || '').toLowerCase().trim();
+    var category = opts.category || 'All';
+    var items = data.dailyPosts.filter(function (p) {
+      var matchCat = category === 'All' || p.category === category;
+      var matchKey = !keyword || (
+        p.title.toLowerCase().indexOf(keyword) !== -1 ||
+        p.description.toLowerCase().indexOf(keyword) !== -1 ||
+        (p.tags || []).join(' ').toLowerCase().indexOf(keyword) !== -1
+      );
+      return matchCat && matchKey;
+    });
+    host.innerHTML = items.length ? items.map(function (p) {
+      return '' +
+        '<article class="daily-card">' +
+          '<div class="daily-card__thumb" style="background: linear-gradient(135deg,' + p.themeA + ',' + p.themeB + ')">' +
+            '<svg viewBox="0 0 34 34"><path d="' + p.icon + '" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+          '</div>' +
+          '<div class="daily-card__body">' +
+            '<div class="daily-card__meta"><time>' + p.date + '</time><span class="chip chip--sm">' + p.category + '</span></div>' +
+            '<h3>' + p.title + '</h3>' +
+            '<p>' + p.description + '</p>' +
+            '<div class="daily-card__tags">' + (p.tags || []).map(function (t) { return '<span class="chip chip--sm">#' + t + '</span>'; }).join('') + '</div>' +
+            '<div class="daily-card__actions">' +
+              '<button type="button" class="btn btn--text btn--sm" data-action="copy-quote" data-quote="' + p.title + ': ' + p.description.replace(/"/g, '&quot;') + '"><i data-lucide="copy"></i> Share</button>' +
+            '</div>' +
+          '</div>' +
+        '</article>';
+    }).join('') : '<p class="daily-empty">Belum ada post yang cocok dengan filter ini.</p>';
+    if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+  }
+
+  function initDaily() {
+    var host = document.querySelector('[data-daily-grid]');
+    if (!host) return;
+    var state = { keyword: '', category: 'All' };
+    renderDailyPosts(host, state);
+    var search = document.querySelector('[data-daily-search]');
+    if (search) search.addEventListener('input', function () { state.keyword = search.value; renderDailyPosts(host, state); });
+    var filter = document.querySelector('[data-daily-filter]');
+    if (filter) {
+      filter.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          filter.querySelectorAll('button').forEach(function (x) { x.classList.remove('is-active'); });
+          b.classList.add('is-active');
+          state.category = b.getAttribute('data-cat');
+          renderDailyPosts(host, state);
+        });
+      });
+    }
+  }
+
+  // ---------- Knowledge & Quotes rendering ----------
+  function initKnowledgeQuotes() {
+    var data = window.SheilaData; if (!data) return;
+    var qHost = document.querySelector('[data-quotes-grid]');
+    if (qHost) {
+      qHost.innerHTML = data.quotes.map(function (q) {
+        return '' +
+          '<article class="quote-card">' +
+            '<svg class="quote-card__mark" viewBox="0 0 32 32"><path d="' + window.SheilaData.icons.quote + '" fill="rgba(20,184,166,0.18)" stroke="currentColor" stroke-width="0"/></svg>' +
+            '<p class="quote-card__text">' + q.text + '</p>' +
+            (q.author ? '<span class="quote-card__author">— ' + q.author + '</span>' : '') +
+            '<button type="button" class="quote-card__copy" data-action="copy-quote" data-quote="' + q.text.replace(/"/g, '&quot;') + '" aria-label="Copy quote"><i data-lucide="copy"></i></button>' +
+          '</article>';
+      }).join('');
+    }
+    var kHost = document.querySelector('[data-knowledge-grid]');
+    if (kHost) {
+      kHost.innerHTML = data.knowledge.map(function (k) {
+        return '' +
+          '<article class="knowledge-card">' +
+            '<div class="knowledge-card__icon" style="background: linear-gradient(135deg,' + k.themeA + ',' + k.themeB + ')">' +
+              '<svg viewBox="0 0 34 34"><path d="' + k.icon + '" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+            '</div>' +
+            '<span class="knowledge-card__cat">' + k.category + '</span>' +
+            '<h3>' + k.title + '</h3>' +
+            '<p>' + k.summary + '</p>' +
+            '<button type="button" class="btn btn--text btn--sm" data-action="read-more" data-detail="' + k.id + '"><i data-lucide="book-open"></i> Read more</button>' +
+          '</article>';
+      }).join('');
+    }
+    if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+  }
+
+  // ---------- Social tabs ----------
+  function initSocialTabs() {
+    var section = document.querySelector('[data-social-tabs]');
+    if (!section) return;
+    var data = window.SheilaData; if (!data) return;
+    var tabs = section.querySelectorAll('.social-tabs__tab');
+    var grid = section.querySelector('.social-grid');
+    function render(platform) {
+      var posts = data.socials[platform] || [];
+      var profileUrl = data.socialProfileUrls[platform] || '#';
+      grid.innerHTML = posts.map(function (p) {
+        return '' +
+          '<article class="social-card">' +
+            '<div class="social-card__head">' +
+              '<i data-lucide="' + iconForPlatform(platform) + '"></i>' +
+              '<span>' + platform.charAt(0).toUpperCase() + platform.slice(1) + '</span>' +
+              (p.date ? '<time>' + p.date + '</time>' : '') +
+            '</div>' +
+            (p.url
+              ? '<div class="social-card__embed"><a href="' + p.url + '" target="_blank" rel="noopener">View original post →</a></div>'
+              : '<div class="social-card__embed social-card__embed--placeholder"><i data-lucide="image-plus"></i><p>Social post embed will appear here.</p></div>') +
+            '<p class="social-card__caption">' + p.caption + '</p>' +
+            '<div class="social-card__actions">' +
+              '<button type="button" class="btn btn--text btn--sm" data-action="add-embed"><i data-lucide="link-2"></i> Add Embed Link</button>' +
+              '<a href="' + profileUrl + '" target="_blank" rel="noopener" class="btn btn--text btn--sm"><i data-lucide="external-link"></i> Open Profile</a>' +
+            '</div>' +
+          '</article>';
+      }).join('');
+      if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+    }
+    function iconForPlatform(p) {
+      return ({ instagram: 'instagram', facebook: 'facebook', linkedin: 'linkedin', threads: 'at-sign' })[p] || 'share-2';
+    }
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () {
+        tabs.forEach(function (x) { x.classList.remove('is-active'); });
+        t.classList.add('is-active');
+        render(t.getAttribute('data-platform'));
+      });
+    });
+    var initial = section.querySelector('.social-tabs__tab.is-active') || tabs[0];
+    if (initial) { initial.classList.add('is-active'); render(initial.getAttribute('data-platform')); }
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initIcons();
     initTheme();
@@ -543,5 +863,40 @@
     initParallax();
     initContactForm();
     initActions();
+    initActivityHosts();
+    initDaily();
+    initKnowledgeQuotes();
+    initSocialTabs();
+    enhanceExperienceCards();
   });
+
+  function enhanceExperienceCards() {
+    document.querySelectorAll('.exp-card[data-theme]').forEach(function (card) {
+      if (card.querySelector('.exp-card__cta')) return;
+      var key = card.getAttribute('data-theme');
+      var cta = document.createElement('div');
+      cta.className = 'exp-card__cta';
+      cta.innerHTML =
+        '<button type="button" class="btn btn--text btn--sm" data-action="read-more" data-detail="' + key + '"><i data-lucide="book-open"></i> Read more</button>' +
+        '<button type="button" class="btn btn--text btn--sm" data-action="view-gallery" data-gallery="' + key + '"><i data-lucide="image"></i> Gallery</button>';
+      card.appendChild(cta);
+    });
+    // Bento portfolio cards → wire to gallery (use data-id or label fallback)
+    document.querySelectorAll('.bento__item').forEach(function (card, i) {
+      if (card.querySelector('.bento__cta')) return;
+      var id = card.getAttribute('data-id');
+      if (!id) {
+        // Heuristic: map to first activity
+        var fallback = (window.SheilaData && window.SheilaData.activities && window.SheilaData.activities[i % window.SheilaData.activities.length]);
+        id = fallback ? fallback.id : 'social-microblog';
+      }
+      var cta = document.createElement('div');
+      cta.className = 'bento__cta';
+      cta.innerHTML =
+        '<button type="button" class="btn btn--text btn--sm" data-action="view-gallery" data-gallery="' + id + '"><i data-lucide="image"></i> View Gallery</button>' +
+        '<button type="button" class="btn btn--text btn--sm" data-action="read-more" data-detail="' + id + '"><i data-lucide="book-open"></i> Read More</button>';
+      card.appendChild(cta);
+    });
+    if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+  }
 })();

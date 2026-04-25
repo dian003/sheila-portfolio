@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Activities &amp; Gallery — Sheila Annisa</title>
+  <meta name="description" content="Activities and gallery from Sheila Annisa — events, organization, volunteering, e-commerce, and finance documentation." />
+  <meta name="theme-color" content="#F8FAFC" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="scroll-progress" aria-hidden="true"><span id="scrollBar"></span></div>
+  <div class="bg-garden" aria-hidden="true">
+    <span class="blob blob--sage"></span>
+    <span class="blob blob--blush"></span>
+    <span class="blob blob--lavender"></span>
+  </div>
+
+  <header class="nav" id="nav">
+    <div class="container nav__inner">
+      <a href="index.html" class="nav__brand" aria-label="Sheila Annisa - Home">
+        <span class="nav__mark">
+          <svg viewBox="0 0 40 40" width="22" height="22" aria-hidden="true">
+            <path d="M20 4 C30 12, 34 24, 20 36 C6 24, 10 12, 20 4 Z" fill="#14B8A6"/>
+          </svg>
+        </span>
+        <span class="nav__name">Sheila <em>Annisa</em></span>
+      </a>
+      <nav aria-label="Navigasi utama">
+        <button class="nav__toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Open navigation menu">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav__menu" id="navMenu">
+          <li><a href="index.html"><i data-lucide="home" class="nav__icon"></i><span>Home</span></a></li>
+          <li><a href="index.html#about"><i data-lucide="user-round" class="nav__icon"></i><span>About</span></a></li>
+          <li><a href="index.html#experience"><i data-lucide="briefcase" class="nav__icon"></i><span>Experience</span></a></li>
+          <li><a href="activities.html" class="is-active"><i data-lucide="image" class="nav__icon"></i><span>Activities</span></a></li>
+          <li><a href="daily-activity.html"><i data-lucide="calendar-days" class="nav__icon"></i><span>Daily</span></a></li>
+          <li><a href="index.html#social"><i data-lucide="share-2" class="nav__icon"></i><span>Social</span></a></li>
+          <li><a href="index.html#contact" class="nav__cta"><span>Hubungi Saya</span><i data-lucide="arrow-up-right"></i></a></li>
+          <li>
+            <button type="button" class="theme-toggle" data-action="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+              <i data-lucide="moon" class="icon-moon"></i>
+              <i data-lucide="sun" class="icon-sun"></i>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container page-hero__inner">
+        <span class="kicker">Activities</span>
+        <h1>Activities &amp; Gallery</h1>
+        <p>Dokumentasi kegiatan organisasi, volunteer, fundraising, e-commerce, dan administrasi yang menjadi pengalaman profesional saya.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="filter-bar" data-activity-filter="[data-activity-grid]" role="tablist">
+          <button type="button" class="is-active" data-cat="All">All</button>
+          <button type="button" data-cat="Organization">Organization</button>
+          <button type="button" data-cat="Volunteer">Volunteer</button>
+          <button type="button" data-cat="Finance">Finance</button>
+          <button type="button" data-cat="Social Media">Social Media</button>
+          <button type="button" data-cat="Fundraising">Fundraising</button>
+          <button type="button" data-cat="E-commerce">E-commerce</button>
+          <button type="button" data-cat="Event">Event</button>
+        </div>
+        <div class="activity-grid" data-activity-grid></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p>© <span id="year"></span> Sheila Annisa. Crafted with care.</p>
+      <p><a href="index.html">← Back to home</a></p>
+    </div>
+  </footer>
+
+  <script src="data.js" defer></script>
+  <script src="script.js" defer></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
