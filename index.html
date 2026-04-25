@@ -75,25 +75,22 @@
           <span></span><span></span><span></span>
         </button>
         <ul class="nav__menu" id="navMenu">
-          <li><a href="#home"><i data-lucide="home" class="nav__icon"></i><span data-en="Home" data-id="Home">Home</span></a></li>
-          <li><a href="#about"><i data-lucide="user-round" class="nav__icon"></i><span data-en="About" data-id="About">About</span></a></li>
-          <li><a href="#journey"><i data-lucide="map" class="nav__icon"></i><span data-en="Journey" data-id="Journey">Journey</span></a></li>
-          <li><a href="#experience"><i data-lucide="briefcase" class="nav__icon"></i><span data-en="Experience" data-id="Experience">Experience</span></a></li>
-          <li><a href="#skills"><i data-lucide="sparkles" class="nav__icon"></i><span data-en="Skills" data-id="Skills">Skills</span></a></li>
-          <li><a href="#portfolio"><i data-lucide="layout-grid" class="nav__icon"></i><span data-en="Portfolio" data-id="Portfolio">Portfolio</span></a></li>
-          <li><a href="activities.html"><i data-lucide="image" class="nav__icon"></i><span data-en="Activities" data-id="Activities">Activities</span></a></li>
-          <li><a href="daily-activity.html"><i data-lucide="calendar-days" class="nav__icon"></i><span data-en="Daily" data-id="Daily">Daily</span></a></li>
-          <li><a href="#social"><i data-lucide="share-2" class="nav__icon"></i><span data-en="Social" data-id="Social">Social</span></a></li>
-          <li><a href="#contact" class="nav__cta">
-            <span data-en="Let's Talk" data-id="Hubungi Saya">Hubungi Saya</span>
-            <i data-lucide="arrow-up-right"></i>
-          </a></li>
+          <li><a href="#home" class="nav__link">Home</a></li>
+          <li><a href="#profile" class="nav__link">Profile</a></li>
+          <li><a href="#work" class="nav__link">Work</a></li>
+          <li><a href="activities.html" class="nav__link">Activities</a></li>
+          <li><a href="#contact" class="nav__link">Contact</a></li>
+          <li class="nav__divider" aria-hidden="true"></li>
           <li>
             <button type="button" class="theme-toggle" data-action="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
               <i data-lucide="moon" class="icon-moon"></i>
               <i data-lucide="sun" class="icon-sun"></i>
             </button>
           </li>
+          <li><a href="#contact" class="nav__cta">
+            <span>Hire Me</span>
+            <i data-lucide="arrow-up-right"></i>
+          </a></li>
         </ul>
       </nav>
     </div>
@@ -355,7 +352,7 @@
     </div>
 
     <!-- ============ 2. ABOUT ============ -->
-    <section class="section section--about" id="about">
+    <section class="section section--about" id="about"><a id="profile" aria-hidden="true"></a>
       <div class="container">
         <header class="section__head reveal">
           <span class="kicker" data-en="About Sheila" data-id="Tentang Sheila">Tentang Sheila</span>
@@ -433,7 +430,7 @@
     </section>
 
     <!-- ============ 3. CAREER JOURNEY ============ -->
-    <section class="section section--journey" id="journey">
+    <section class="section section--journey" id="journey"><a id="work" aria-hidden="true"></a>
       <div class="container">
         <header class="section__head reveal">
           <span class="kicker" data-en="Career Journey" data-id="Perjalanan Karier">Perjalanan Karier</span>
@@ -1099,39 +1096,43 @@
       </div>
     </section>
 
-    <!-- ============ KNOWLEDGE & QUOTES ============ -->
-    <section class="section section--knowledge" id="knowledge">
+    <!-- ============ ACTIVITIES PREVIEW ============ -->
+    <section class="section section--activities-preview" id="activities">
       <div class="container">
         <header class="section__head reveal">
-          <span class="kicker">Insight</span>
-          <h2 class="section__title">Knowledge &amp; Quotes</h2>
-          <p class="section__lead">Catatan kecil dari pekerjaan, organisasi, dan refleksi harian.</p>
+          <span class="kicker">Activities</span>
+          <h2 class="section__title">Glimpse of work, thoughts, and stories.</h2>
+          <p class="section__lead">Preview kegiatan, daily progress, social updates, dan refleksi singkat — selengkapnya di halaman Activities.</p>
         </header>
 
-        <div class="quotes-grid reveal" data-quotes-grid></div>
-
-        <h3 class="section__sub reveal" style="margin-top:3rem">Mini articles</h3>
-        <div class="knowledge-grid reveal" data-knowledge-grid></div>
-      </div>
-    </section>
-
-    <!-- ============ SOCIAL UPDATES ============ -->
-    <section class="section section--social" id="social">
-      <div class="container">
-        <header class="section__head reveal">
-          <span class="kicker">Social</span>
-          <h2 class="section__title">Social Updates &amp; Knowledge Sharing</h2>
-          <p class="section__lead">Selected posts, thoughts, quotes, and activities from my social media.</p>
-        </header>
-
-        <div class="social-tabs reveal" data-social-tabs>
-          <div class="social-tabs__bar" role="tablist">
-            <button type="button" class="social-tabs__tab is-active" data-platform="instagram"><i data-lucide="instagram"></i> Instagram</button>
-            <button type="button" class="social-tabs__tab" data-platform="facebook"><i data-lucide="facebook"></i> Facebook</button>
-            <button type="button" class="social-tabs__tab" data-platform="linkedin"><i data-lucide="linkedin"></i> LinkedIn</button>
-            <button type="button" class="social-tabs__tab" data-platform="threads"><i data-lucide="at-sign"></i> Threads</button>
+        <div class="activities-preview reveal">
+          <div class="activities-preview__group">
+            <h3><i data-lucide="image"></i> Gallery</h3>
+            <div class="activities-preview__row" data-preview-gallery></div>
           </div>
-          <div class="social-grid"></div>
+
+          <div class="activities-preview__group">
+            <h3><i data-lucide="calendar-days"></i> Daily progress</h3>
+            <div class="activities-preview__row" data-preview-daily></div>
+          </div>
+
+          <div class="activities-preview__group">
+            <h3><i data-lucide="quote"></i> Quotes</h3>
+            <div class="activities-preview__row activities-preview__row--2" data-preview-quotes></div>
+          </div>
+
+          <div class="activities-preview__group">
+            <h3><i data-lucide="share-2"></i> Social updates</h3>
+            <div class="activities-preview__row activities-preview__row--2" data-preview-social></div>
+          </div>
+        </div>
+
+        <div class="activities-preview__cta reveal">
+          <a class="btn btn--gradient" href="activities.html">
+            <i data-lucide="layout-grid"></i>
+            <span>View All Activities</span>
+            <i data-lucide="arrow-right" class="btn__arrow"></i>
+          </a>
         </div>
       </div>
     </section>

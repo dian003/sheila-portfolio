@@ -867,8 +867,108 @@
     initDaily();
     initKnowledgeQuotes();
     initSocialTabs();
+    initActivitiesPreview();
+    initActivityTabs();
     enhanceExperienceCards();
   });
+
+  // ---------- Activities preview (home) ----------
+  function initActivitiesPreview() {
+    var data = window.SheilaData; if (!data) return;
+    var iconForPlatform = function (p) {
+      return ({ instagram: 'instagram', facebook: 'facebook', linkedin: 'linkedin', threads: 'at-sign' })[p] || 'share-2';
+    };
+
+    var galleryHost = document.querySelector('[data-preview-gallery]');
+    if (galleryHost && data.activities) {
+      galleryHost.innerHTML = data.activities.slice(0, 3).map(function (a) {
+        var thumb = (a.images && a.images.length) ? a.images[0] : placeholderFor(a, a.title);
+        return '' +
+          '<article class="activity-card">' +
+            '<div class="activity-card__thumb"><img src="' + thumb + '" alt="' + (a.title || '') + '"/></div>' +
+            '<div class="activity-card__body">' +
+              '<span class="activity-card__cat">' + (a.category || '') + '</span>' +
+              '<h3 class="activity-card__title">' + a.title + '</h3>' +
+              '<p class="activity-card__desc">' + (a.description || '') + '</p>' +
+              '<div class="activity-card__cta">' +
+                '<button type="button" class="btn btn--text btn--sm" data-action="view-gallery" data-gallery="' + a.id + '"><i data-lucide="image"></i> View</button>' +
+                '<button type="button" class="btn btn--text btn--sm" data-action="read-more" data-detail="' + a.id + '"><i data-lucide="book-open"></i> Detail</button>' +
+              '</div>' +
+            '</div>' +
+          '</article>';
+      }).join('');
+    }
+
+    var dailyHost = document.querySelector('[data-preview-daily]');
+    if (dailyHost && data.dailyPosts) {
+      dailyHost.innerHTML = data.dailyPosts.slice(0, 3).map(function (d) {
+        return '' +
+          '<article class="daily-card">' +
+            '<div class="daily-card__thumb" style="background: linear-gradient(135deg,' + d.themeA + ',' + d.themeB + ')">' +
+              '<svg viewBox="0 0 34 34"><path d="' + d.icon + '" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+            '</div>' +
+            '<div class="daily-card__body">' +
+              '<div class="daily-card__meta"><time>' + d.date + '</time><span class="chip chip--sm">' + d.category + '</span></div>' +
+              '<h3>' + d.title + '</h3>' +
+              '<p>' + d.description + '</p>' +
+            '</div>' +
+          '</article>';
+      }).join('');
+    }
+
+    var quotesHost = document.querySelector('[data-preview-quotes]');
+    if (quotesHost && data.quotes) {
+      quotesHost.innerHTML = data.quotes.slice(0, 2).map(function (q) {
+        return '' +
+          '<article class="quote-card">' +
+            '<svg class="quote-card__mark" viewBox="0 0 32 32"><path d="' + data.icons.quote + '" fill="rgba(20,184,166,0.18)" stroke="currentColor" stroke-width="0"/></svg>' +
+            '<p class="quote-card__text">' + q.text + '</p>' +
+            (q.author ? '<span class="quote-card__author">— ' + q.author + '</span>' : '') +
+            '<button type="button" class="quote-card__copy" data-action="copy-quote" data-quote="' + q.text.replace(/"/g, '&quot;') + '" aria-label="Copy quote"><i data-lucide="copy"></i></button>' +
+          '</article>';
+      }).join('');
+    }
+
+    var socialHost = document.querySelector('[data-preview-social]');
+    if (socialHost && data.socials) {
+      var preview = [];
+      ['instagram', 'linkedin'].forEach(function (plat) {
+        var p = (data.socials[plat] || [])[0];
+        if (p) preview.push({ platform: plat, post: p });
+      });
+      socialHost.innerHTML = preview.map(function (s) {
+        return '' +
+          '<article class="social-card">' +
+            '<div class="social-card__head">' +
+              '<i data-lucide="' + iconForPlatform(s.platform) + '"></i>' +
+              '<span>' + s.platform.charAt(0).toUpperCase() + s.platform.slice(1) + '</span>' +
+              (s.post.date ? '<time>' + s.post.date + '</time>' : '') +
+            '</div>' +
+            '<div class="social-card__embed social-card__embed--placeholder"><i data-lucide="image-plus"></i><p>Social post embed will appear here.</p></div>' +
+            '<p class="social-card__caption">' + s.post.caption + '</p>' +
+          '</article>';
+      }).join('');
+    }
+
+    if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+  }
+
+  // ---------- Activity page tabs (Gallery / Daily / Social / Quotes) ----------
+  function initActivityTabs() {
+    var bar = document.querySelector('[data-activity-tabs]');
+    if (!bar) return;
+    var tabs = bar.querySelectorAll('button[data-tab]');
+    var panels = document.querySelectorAll('[data-tab-panel]');
+    function activate(name) {
+      tabs.forEach(function (t) { t.classList.toggle('is-active', t.getAttribute('data-tab') === name); });
+      panels.forEach(function (p) { p.classList.toggle('is-active', p.getAttribute('data-tab-panel') === name); });
+    }
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () { activate(t.getAttribute('data-tab')); });
+    });
+    var initial = bar.querySelector('button.is-active') || tabs[0];
+    if (initial) activate(initial.getAttribute('data-tab'));
+  }
 
   function enhanceExperienceCards() {
     document.querySelectorAll('.exp-card[data-theme]').forEach(function (card) {

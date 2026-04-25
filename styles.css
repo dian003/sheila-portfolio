@@ -3025,3 +3025,196 @@ p, li, .section__lead { color: var(--text-body) !important; }
 
 /* Reduce excess gap between bento's last child (cta) and grid bottom */
 .bento__item { row-gap: .8rem; }
+
+/* ============================================================
+   PHASE F — NAV SIMPLIFICATION + COMPACT LAYOUT
+   ============================================================ */
+
+/* Anchor offset for in-page nav (account for sticky nav height) */
+section[id], a[id] { scroll-margin-top: 96px; }
+
+/* Simplified nav: 5 menu + theme + Hire Me */
+.nav__menu { gap: .35rem; align-items: center; }
+.nav__menu .nav__link {
+  position: relative;
+  padding: .55rem .9rem;
+  font-size: .92rem; font-weight: 500;
+  color: var(--text-body) !important;
+  border-radius: var(--r-pill);
+  transition: color .18s ease, background .18s ease;
+}
+.nav__menu .nav__link:hover { color: var(--primary-dark) !important; background: var(--surface-soft); }
+[data-theme="dark"] .nav__menu .nav__link:hover { color: var(--primary) !important; background: rgba(45,212,191,.10); }
+
+/* Active underline (small gradient) */
+.nav__menu .nav__link.is-active {
+  color: var(--primary-dark) !important;
+  font-weight: 600;
+}
+.nav__menu .nav__link.is-active::after {
+  content: ""; position: absolute; left: 1rem; right: 1rem; bottom: .35rem;
+  height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+[data-theme="dark"] .nav__menu .nav__link.is-active { color: var(--primary) !important; }
+
+/* Divider | between links and theme/cta */
+.nav__divider {
+  width: 1px; height: 18px;
+  background: var(--border);
+  margin: 0 .25rem;
+  list-style: none;
+}
+
+/* CTA (Hire Me) */
+.nav__cta {
+  display: inline-flex; align-items: center; gap: .35rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%) !important;
+  color: #fff !important;
+  padding: .5rem .95rem !important;
+  border-radius: var(--r-pill);
+  font-weight: 600 !important;
+  font-size: .88rem;
+  box-shadow: 0 8px 18px rgba(20, 184, 166, 0.30);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.nav__cta:hover { transform: translateY(-1px); box-shadow: 0 12px 24px rgba(20, 184, 166, 0.40); }
+.nav__cta::after { display: none !important; }
+
+.theme-toggle {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .18s ease;
+}
+.theme-toggle:hover { background: var(--c-tosca-soft); color: var(--primary-dark); }
+[data-theme="dark"] .theme-toggle { background: rgba(45,212,191,.10); color: var(--primary); border-color: rgba(94,234,212,.30); }
+
+/* Mobile nav simplification */
+@media (max-width: 991px) {
+  .nav__menu .nav__link { padding: .65rem 1rem; font-size: 1rem; width: 100%; justify-content: flex-start; }
+  .nav__divider { display: none; }
+  .nav__cta { width: auto; align-self: flex-start; margin-top: .5rem; }
+}
+
+/* ---------- Compact section padding ---------- */
+.section { padding: clamp(3rem, 7vw, 5.5rem) 0; }
+.section--hero, .hero { min-height: 82vh; }
+
+/* Hero bottom gap shrink */
+.hero { padding-top: clamp(5rem, 9vw, 6.5rem); padding-bottom: clamp(2rem, 4vw, 3rem); }
+
+@media (max-width: 992px) {
+  .section { padding: clamp(2.5rem, 6vw, 4.5rem) 0; }
+  .hero { min-height: auto; }
+}
+@media (max-width: 600px) {
+  .section { padding: clamp(2rem, 8vw, 3.5rem) 0; }
+}
+
+/* Reduce gap between hero and marquee */
+.marquee { margin-top: -.5rem; }
+
+/* Tighter section heads */
+.section__head { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+
+/* ============================================================
+   ACTIVITIES PREVIEW (home)
+   ============================================================ */
+.activities-preview {
+  display: grid;
+  gap: 1.25rem;
+}
+.activities-preview__row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+.activities-preview__row--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 900px) {
+  .activities-preview__row, .activities-preview__row--2 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .activities-preview__row, .activities-preview__row--2 { grid-template-columns: 1fr; }
+}
+.activities-preview__group h3 {
+  font-family: var(--font-display, serif);
+  font-size: 1.15rem; color: var(--text); margin: 0 0 .85rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+.activities-preview__group h3 i, .activities-preview__group h3 svg {
+  color: var(--primary-dark); width: 18px; height: 18px;
+}
+[data-theme="dark"] .activities-preview__group h3 i, [data-theme="dark"] .activities-preview__group h3 svg {
+  color: var(--primary);
+}
+.activities-preview__cta { display: flex; justify-content: center; margin-top: 1.5rem; }
+
+/* ============================================================
+   ACTIVITIES PAGE — TABS
+   ============================================================ */
+.tabs-bar {
+  display: flex; flex-wrap: wrap; gap: .4rem;
+  margin-bottom: 2rem;
+  padding: .35rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  width: fit-content;
+}
+.tabs-bar button {
+  background: transparent;
+  border: none;
+  color: var(--text-body);
+  padding: .55rem 1.1rem;
+  border-radius: var(--r-pill);
+  font-size: .9rem; font-weight: 500;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: .4rem;
+  transition: all .18s ease;
+}
+.tabs-bar button:hover { color: var(--primary-dark); }
+[data-theme="dark"] .tabs-bar button:hover { color: var(--primary); }
+.tabs-bar button.is-active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+}
+.tabs-bar button svg, .tabs-bar button i { width: 16px; height: 16px; }
+
+.tab-panel { display: none; }
+.tab-panel.is-active { display: block; }
+
+
+/* Active tab keeps white text on hover (override) */
+.tabs-bar button.is-active,
+.tabs-bar button.is-active:hover {
+  background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+  color: #FFFFFF !important;
+}
+.tabs-bar button.is-active svg,
+.tabs-bar button.is-active i,
+.tabs-bar button.is-active:hover svg,
+.tabs-bar button.is-active:hover i {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+}
+
+/* Same for filter bar active */
+.filter-bar button.is-active,
+.filter-bar button.is-active:hover {
+  background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+  color: #FFFFFF !important;
+  border-color: transparent !important;
+}
+
+/* Same for social tabs */
+.social-tabs__tab.is-active,
+.social-tabs__tab.is-active:hover {
+  background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+  color: #FFFFFF !important;
+  border-color: transparent !important;
+}
+.social-tabs__tab.is-active svg,
+.social-tabs__tab.is-active:hover svg { color: #FFFFFF !important; }
