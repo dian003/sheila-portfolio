@@ -250,6 +250,59 @@
             <span data-en="Detail-Oriented" data-id="Detail-Oriented">Detail-Oriented</span>
           </div>
 
+          <!-- Pie chart 3D mini-card -->
+          <div class="mini-card mini-card--pie" aria-hidden="true">
+            <span class="mini-card__label" data-en="Revenue Mix" data-id="Komposisi">Komposisi</span>
+            <div class="mini-card__pierow">
+              <svg class="pie-3d" viewBox="0 0 60 60" width="56" height="56">
+                <defs>
+                  <radialGradient id="pieShade" cx="0.4" cy="0.35" r="0.8">
+                    <stop offset="0" stop-color="#fff" stop-opacity=".55"/>
+                    <stop offset=".55" stop-color="#fff" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+                <ellipse cx="30" cy="34" rx="22" ry="6" fill="rgba(31,61,43,.18)"/>
+                <circle cx="30" cy="30" r="22" fill="#FFD6A5"/>
+                <path d="M30 30 L30 8 A22 22 0 0 1 51.5 33.5 Z" fill="#7FB77E"/>
+                <path d="M30 30 L51.5 33.5 A22 22 0 0 1 39 50.5 Z" fill="#C88A9A"/>
+                <path d="M30 30 L39 50.5 A22 22 0 0 1 17 47.7 Z" fill="#CDB4DB"/>
+                <circle cx="30" cy="30" r="22" fill="url(#pieShade)"/>
+                <circle cx="30" cy="30" r="8" fill="#FFFDF7"/>
+              </svg>
+              <div class="mini-card__pielegend">
+                <span><i style="background:#7FB77E"></i> Admin</span>
+                <span><i style="background:#C88A9A"></i> Sales</span>
+                <span><i style="background:#CDB4DB"></i> Media</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Team / HR 3D mini-card -->
+          <div class="mini-card mini-card--team" aria-hidden="true">
+            <span class="mini-card__label" data-en="Team Sync" data-id="Tim">Tim</span>
+            <div class="team-figs">
+              <svg viewBox="0 0 36 40" width="26" height="30" class="team-fig team-fig--1" aria-hidden="true">
+                <ellipse cx="18" cy="36" rx="13" ry="3" fill="rgba(31,61,43,.12)"/>
+                <circle cx="18" cy="12" r="7" fill="#F4D7C0"/>
+                <path d="M11 12 C11 6 14 3 18 3 C22 3 25 6 25 12 L25 14 L11 14 Z" fill="#7FB77E"/>
+                <path d="M5 36 C5 26 10 22 18 22 C26 22 31 26 31 36 Z" fill="#A7C7A1"/>
+              </svg>
+              <svg viewBox="0 0 36 40" width="26" height="30" class="team-fig team-fig--2" aria-hidden="true">
+                <ellipse cx="18" cy="36" rx="13" ry="3" fill="rgba(31,61,43,.12)"/>
+                <circle cx="18" cy="12" r="7" fill="#F4D7C0"/>
+                <path d="M11 12 C11 6 14 3 18 3 C22 3 25 6 25 12 L25 14 L11 14 Z" fill="#DFA3B5"/>
+                <path d="M5 36 C5 26 10 22 18 22 C26 22 31 26 31 36 Z" fill="#F8BBD0"/>
+              </svg>
+              <svg viewBox="0 0 36 40" width="26" height="30" class="team-fig team-fig--3" aria-hidden="true">
+                <ellipse cx="18" cy="36" rx="13" ry="3" fill="rgba(31,61,43,.12)"/>
+                <circle cx="18" cy="12" r="7" fill="#F4D7C0"/>
+                <path d="M11 12 C11 6 14 3 18 3 C22 3 25 6 25 12 L25 14 L11 14 Z" fill="#D6B56D"/>
+                <path d="M5 36 C5 26 10 22 18 22 C26 22 31 26 31 36 Z" fill="#FFD6A5"/>
+              </svg>
+            </div>
+            <p class="mini-card__sub" data-en="People · Collaboration" data-id="People · Kolaborasi">People · Kolaborasi</p>
+          </div>
+
           <!-- Floating badges -->
           <span class="hero-badge hero-badge--gpa">
             <i data-lucide="award"></i>
@@ -897,13 +950,83 @@
               <svg viewBox="0 0 60 60"><circle cx="30" cy="20" r="9" fill="#F8BBD0"/><circle cx="38" cy="28" r="9" fill="#F8BBD0"/><circle cx="30" cy="36" r="9" fill="#F8BBD0"/><circle cx="22" cy="28" r="9" fill="#F8BBD0"/><circle cx="30" cy="28" r="5" fill="#D6B56D"/></svg>
             </span>
             <div class="why-center__inner">
-              <div class="why-center__avatar">
-                <svg viewBox="0 0 200 240" width="120" height="120">
-                  <use href="#"></use>
+              <div class="why-center__scene" aria-hidden="true">
+                <svg viewBox="0 0 220 180" width="220" height="180" class="desk-3d">
+                  <defs>
+                    <linearGradient id="deskTop" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#FFFDF7"/>
+                      <stop offset="1" stop-color="#FAF3E0"/>
+                    </linearGradient>
+                    <linearGradient id="deskFront" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#D6B56D"/>
+                      <stop offset="1" stop-color="#C88A9A"/>
+                    </linearGradient>
+                    <linearGradient id="screenG" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#1F3D2B"/>
+                      <stop offset="1" stop-color="#2E2E2E"/>
+                    </linearGradient>
+                    <linearGradient id="dashG" x1="0" y1="1" x2="1" y2="0">
+                      <stop offset="0" stop-color="#7FB77E"/>
+                      <stop offset="1" stop-color="#B8E0D2"/>
+                    </linearGradient>
+                  </defs>
+                  <!-- ground shadow -->
+                  <ellipse cx="110" cy="170" rx="92" ry="6" fill="rgba(31,61,43,.18)"/>
+                  <!-- desk top + front (isometric-ish) -->
+                  <path d="M30 130 L110 100 L190 130 L190 142 L110 172 L30 142 Z" fill="url(#deskFront)"/>
+                  <path d="M30 130 L110 100 L190 130 L110 160 Z" fill="url(#deskTop)"/>
+                  <!-- laptop base -->
+                  <path d="M76 116 L110 104 L144 116 L144 122 L110 134 L76 122 Z" fill="#A7C7A1"/>
+                  <!-- laptop screen -->
+                  <path d="M84 100 L110 90 L136 100 L136 116 L110 126 L84 116 Z" fill="url(#screenG)"/>
+                  <!-- dashboard bars on screen -->
+                  <rect x="92" y="100" width="4" height="8" fill="url(#dashG)" rx="1" transform="skewY(-15)"/>
+                  <rect x="100" y="98" width="4" height="10" fill="url(#dashG)" rx="1" transform="skewY(-15)"/>
+                  <rect x="108" y="96" width="4" height="12" fill="url(#dashG)" rx="1" transform="skewY(-15)"/>
+                  <rect x="116" y="94" width="4" height="14" fill="url(#dashG)" rx="1" transform="skewY(-15)"/>
+                  <!-- coffee mug -->
+                  <ellipse cx="58" cy="124" rx="9" ry="3" fill="rgba(31,61,43,.2)"/>
+                  <path d="M50 116 L66 116 L64 126 Q58 128 52 126 Z" fill="#DFA3B5"/>
+                  <ellipse cx="58" cy="116" rx="8" ry="2" fill="#FFFDF7"/>
+                  <!-- documents stack -->
+                  <path d="M152 122 L172 116 L186 121 L166 127 Z" fill="#FFFDF7" stroke="#CDB4DB" stroke-width=".8"/>
+                  <path d="M150 126 L170 120 L184 125 L164 131 Z" fill="#FFD6A5" stroke="#D6B56D" stroke-width=".8"/>
+                  <!-- pie chart floating above desk -->
+                  <g transform="translate(40 60)">
+                    <ellipse cx="22" cy="26" rx="20" ry="5" fill="rgba(31,61,43,.15)"/>
+                    <circle cx="22" cy="22" r="20" fill="#FFD6A5"/>
+                    <path d="M22 22 L22 2 A20 20 0 0 1 41.5 24.5 Z" fill="#7FB77E"/>
+                    <path d="M22 22 L41.5 24.5 A20 20 0 0 1 30 40 Z" fill="#C88A9A"/>
+                    <circle cx="22" cy="22" r="7" fill="#FFFDF7"/>
+                  </g>
+                  <!-- bar chart card floating right -->
+                  <g transform="translate(150 36)">
+                    <rect x="0" y="0" width="48" height="36" rx="4" fill="#FFFDF7" stroke="#CDB4DB" stroke-width=".8"/>
+                    <rect x="6" y="20" width="6" height="12" fill="#A7C7A1" rx="1"/>
+                    <rect x="16" y="14" width="6" height="18" fill="#7FB77E" rx="1"/>
+                    <rect x="26" y="8" width="6" height="24" fill="#C88A9A" rx="1"/>
+                    <rect x="36" y="4" width="6" height="28" fill="#D6B56D" rx="1"/>
+                    <path d="M4 32 L46 32" stroke="#CDB4DB" stroke-width=".8"/>
+                  </g>
+                  <!-- mini people figures -->
+                  <g transform="translate(94 142)" class="desk-people">
+                    <!-- person 1 -->
+                    <ellipse cx="6" cy="22" rx="6" ry="1.4" fill="rgba(31,61,43,.18)"/>
+                    <circle cx="6" cy="6" r="3.6" fill="#F4D7C0"/>
+                    <path d="M2.5 6 C2.5 3 4 1.6 6 1.6 C8 1.6 9.5 3 9.5 6 L9.5 7 L2.5 7 Z" fill="#7FB77E"/>
+                    <path d="M0 22 C0 14 2.5 11 6 11 C9.5 11 12 14 12 22 Z" fill="#A7C7A1"/>
+                    <!-- person 2 -->
+                    <g transform="translate(14 -2)">
+                      <ellipse cx="6" cy="22" rx="6" ry="1.4" fill="rgba(31,61,43,.18)"/>
+                      <circle cx="6" cy="6" r="3.6" fill="#F4D7C0"/>
+                      <path d="M2.5 6 C2.5 3 4 1.6 6 1.6 C8 1.6 9.5 3 9.5 6 L9.5 7 L2.5 7 Z" fill="#DFA3B5"/>
+                      <path d="M0 22 C0 14 2.5 11 6 11 C9.5 11 12 14 12 22 Z" fill="#F8BBD0"/>
+                    </g>
+                  </g>
                 </svg>
               </div>
-              <strong data-en="Sheila Annisa" data-id="Sheila Annisa">Sheila Annisa</strong>
-              <span data-en="Detail-oriented · Adaptive · Communicative" data-id="Teliti · Adaptif · Komunikatif">Detail-oriented · Adaptive · Communicative</span>
+              <strong data-en="Professional Workspace" data-id="Ruang Kerja Profesional">Ruang Kerja Profesional</strong>
+              <span data-en="Detail-oriented · Adaptive · Communicative" data-id="Teliti · Adaptif · Komunikatif">Teliti · Adaptif · Komunikatif</span>
             </div>
           </div>
 
