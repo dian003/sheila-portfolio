@@ -328,8 +328,208 @@
     });
   }
 
+  /* ============================================================
+     Phase A/B — Theme toggle, Toast, Modal, Functional buttons
+     ============================================================ */
+
+  // ---------- Theme toggle (light/dark with localStorage + system pref) ----------
+  function initTheme() {
+    var stored = null;
+    try { stored = localStorage.getItem('sheila-theme'); } catch (e) {}
+    var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = stored || (systemDark ? 'dark' : 'light');
+    applyTheme(theme);
+
+    var toggleBtns = document.querySelectorAll('[data-action="theme-toggle"]');
+    toggleBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        try { localStorage.setItem('sheila-theme', next); } catch (e) {}
+        showToast({
+          type: 'info',
+          title: next === 'dark' ? 'Dark mode' : 'Light mode',
+          message: 'Theme changed to ' + (next === 'dark' ? 'Dark Mode.' : 'Light Mode.')
+        });
+      });
+    });
+  }
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#020617' : '#F8FAFC');
+  }
+
+  // ---------- Toast notification system ----------
+  var toastContainer = null;
+  function ensureToastContainer() {
+    if (toastContainer) return toastContainer;
+    toastContainer = document.createElement('div');
+    toastContainer.className = 'toast-stack';
+    toastContainer.setAttribute('role', 'region');
+    toastContainer.setAttribute('aria-live', 'polite');
+    toastContainer.setAttribute('aria-label', 'Notifications');
+    document.body.appendChild(toastContainer);
+    return toastContainer;
+  }
+  function showToast(opts) {
+    opts = opts || {};
+    var type = opts.type || 'info';
+    var title = opts.title || '';
+    var message = opts.message || '';
+    var duration = typeof opts.duration === 'number' ? opts.duration : 3600;
+    var container = ensureToastContainer();
+    var toast = document.createElement('div');
+    toast.className = 'toast toast--' + type;
+    var iconMap = { success: 'check-circle-2', error: 'alert-circle', warning: 'alert-triangle', info: 'info' };
+    toast.innerHTML =
+      '<div class="toast__icon"><i data-lucide="' + (iconMap[type] || 'info') + '"></i></div>' +
+      '<div class="toast__body">' +
+        (title ? '<div class="toast__title">' + title + '</div>' : '') +
+        '<div class="toast__msg">' + message + '</div>' +
+      '</div>' +
+      '<button type="button" class="toast__close" aria-label="Close"><i data-lucide="x"></i></button>' +
+      '<div class="toast__bar"><span style="animation-duration:' + duration + 'ms"></span></div>';
+    container.appendChild(toast);
+    if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+    var close = function () {
+      toast.classList.add('is-leaving');
+      window.setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 280);
+    };
+    toast.querySelector('.toast__close').addEventListener('click', close);
+    var timer = window.setTimeout(close, duration);
+    toast.addEventListener('mouseenter', function () { window.clearTimeout(timer); });
+    toast.addEventListener('mouseleave', function () { timer = window.setTimeout(close, 1500); });
+    requestAnimationFrame(function () { toast.classList.add('is-visible'); });
+    return toast;
+  }
+  window.showToast = showToast;
+
+  // ---------- Modal system ----------
+  function openModal(opts) {
+    opts = opts || {};
+    var existing = document.querySelector('.modal.is-open');
+    if (existing) closeModal(existing);
+
+    var modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    if (opts.title) modal.setAttribute('aria-label', opts.title);
+    var sizeClass = opts.size === 'gallery' ? 'modal__panel--gallery' : '';
+    modal.innerHTML =
+      '<div class="modal__backdrop" data-modal-close></div>' +
+      '<div class="modal__panel ' + sizeClass + '">' +
+        '<button type="button" class="modal__close" aria-label="Close" data-modal-close><i data-lucide="x"></i></button>' +
+        (opts.title ? '<header class="modal__header"><h2>' + opts.title + '</h2>' + (opts.subtitle ? '<p>' + opts.subtitle + '</p>' : '') + '</header>' : '') +
+        '<div class="modal__body">' + (opts.html || '') + '</div>' +
+      '</div>';
+    document.body.appendChild(modal);
+    document.body.classList.add('has-modal');
+    if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+    requestAnimationFrame(function () { modal.classList.add('is-open'); });
+
+    function onKey(e) { if (e.key === 'Escape') closeModal(modal); }
+    document.addEventListener('keydown', onKey);
+    modal.addEventListener('click', function (e) {
+      if (e.target.closest('[data-modal-close]')) closeModal(modal);
+    });
+    modal._cleanup = function () { document.removeEventListener('keydown', onKey); };
+    if (typeof opts.onOpen === 'function') opts.onOpen(modal);
+    return modal;
+  }
+  function closeModal(modal) {
+    if (!modal) return;
+    modal.classList.remove('is-open');
+    modal.classList.add('is-closing');
+    if (modal._cleanup) modal._cleanup();
+    window.setTimeout(function () {
+      if (modal.parentNode) modal.parentNode.removeChild(modal);
+      if (!document.querySelector('.modal')) document.body.classList.remove('has-modal');
+    }, 280);
+  }
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
+  // ---------- Functional buttons ----------
+  function initActions() {
+    document.body.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      var action = btn.getAttribute('data-action');
+      switch (action) {
+        case 'view-profile': {
+          e.preventDefault();
+          var about = document.getElementById('about');
+          if (about) about.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          break;
+        }
+        case 'contact-me': {
+          e.preventDefault();
+          var contact = document.getElementById('contact');
+          if (contact) contact.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          showToast({ type: 'info', title: 'Contact section', message: 'Contact section opened.' });
+          break;
+        }
+        case 'download-cv': {
+          e.preventDefault();
+          openModal({
+            title: 'Download CV',
+            subtitle: 'Status file CV',
+            html: '<div class="modal-icon"><i data-lucide="file-text"></i></div>' +
+                  '<p>CV file will be added soon. Untuk sementara, silakan hubungi via email atau WhatsApp untuk meminta CV terbaru.</p>' +
+                  '<div class="modal-actions">' +
+                    '<a class="btn btn--gradient" href="mailto:sheilaannisa216@gmail.com?subject=CV%20Request"><i data-lucide="mail"></i> Email Me</a>' +
+                    '<a class="btn btn--outline" href="https://wa.me/6281280885672" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> WhatsApp Me</a>' +
+                  '</div>'
+          });
+          showToast({ type: 'warning', title: 'CV file', message: 'CV file will be available soon.' });
+          break;
+        }
+        case 'email-me': {
+          window.location.href = 'mailto:sheilaannisa216@gmail.com';
+          break;
+        }
+        case 'whatsapp-me': {
+          window.open('https://wa.me/6281280885672', '_blank', 'noopener');
+          break;
+        }
+        case 'linkedin-me': {
+          window.open('https://www.linkedin.com/in/sheilaannisa213', '_blank', 'noopener');
+          break;
+        }
+        case 'view-gallery': {
+          e.preventDefault();
+          var key = btn.getAttribute('data-gallery');
+          if (window.openGallery) window.openGallery(key);
+          break;
+        }
+        case 'read-more': {
+          e.preventDefault();
+          var key2 = btn.getAttribute('data-detail');
+          if (window.openDetail) window.openDetail(key2);
+          break;
+        }
+        case 'copy-quote': {
+          var q = btn.getAttribute('data-quote') || (btn.closest('.quote-card') && btn.closest('.quote-card').querySelector('.quote-card__text') && btn.closest('.quote-card').querySelector('.quote-card__text').textContent) || '';
+          if (q && navigator.clipboard) {
+            navigator.clipboard.writeText(q.trim()).then(function () {
+              showToast({ type: 'success', title: 'Copied', message: 'Quote copied to clipboard.' });
+            });
+          }
+          break;
+        }
+        case 'add-embed': {
+          showToast({ type: 'info', title: 'Add embed', message: 'Embed link form will be available soon. For now, edit data.js to add real posts.' });
+          break;
+        }
+      }
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initIcons();
+    initTheme();
     initMobileMenu();
     initScroll();
     initReveal();
@@ -342,5 +542,6 @@
     initCursorGlow();
     initParallax();
     initContactForm();
+    initActions();
   });
 })();
